@@ -1,0 +1,55 @@
+@api=http://localhost:4000
+
+### Get info localhost user 
+GET {{api}}/user/
+
+
+### Get All Users
+GET {{api}}/user/all
+
+
+
+### Create one user 
+POST {{api}}/user/signUp
+Content-Type: application/json
+
+{
+    "userName":"Michael Jackson",
+    "password":"1234",
+    "email":"michael10@gmail.com"
+}
+
+### Log in 
+POST {{api}}/user/signIn
+Content-Type: application/json
+
+{
+    "email":"jhony2000@gmail.com",
+    "password":"1234"
+}
+
+
+### Create a new product
+POST {{api}}/products/new
+Content-Type: application/json
+
+{
+    "name":"play station 5",
+    "description":"the new console",
+    "price":"180000"
+}
+
+
+### Update a product
+put {{api}}/products/update
+Content-Type: application/json
+
+{
+    "id": "616f28c89532ee10b371dec0",
+    "name": "Sega",
+    "description": "the best console 80s",
+    "price":5000
+}
+
+### Get all products 
+get {{api}}/products/all
