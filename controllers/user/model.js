@@ -21,10 +21,8 @@ const userScheme=new Schema({
     },
     products:[
         {
-            idProduct:{
-                type:Schema.ObjectId,
-                ref:'Product'
-            }
+            type:Schema.ObjectId,
+            ref:'Product'
         }
     ]
 });

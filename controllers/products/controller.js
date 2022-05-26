@@ -1,14 +1,22 @@
 const Product=require('./model');
 const User=require('../user/model');
+const Comment=require('../comments/model');
 const {unlinkSync}=require('fs');
 const controller={};
 
-controller.getAllProducts=async(req,res)=>{
+controller.getProducts=async(req,res)=>{
     const products=await Product.find({seller: req.user});
-    (products.length>0)?
-    res.json(products):
-    res.status(404).json({message:'No products found'});
+    return res.json(products);
 }
+
+controller.getAllProducts=async(req,res)=>{
+    try {
+        const products=await Product.find();
+        return res.json(products);    
+    } catch (error) {
+        res.status(404).json({message:'No products found'});
+    }
+};
 
 controller.getProductById=async(req,res)=>{
     const product=await Product.find({_id:req.params.id,seller:req.user});
@@ -28,10 +36,9 @@ controller.createProduct=async(req,res)=>{
             image:image.path,
             url_image:image.filename
         });
+        const match=await ctrlUser.addProduct(req.user,newProduct._id);
+        if(match===false) return res.status(404).json({message:'Not Found'});
         await newProduct.save();
-        const user=await User.findById(req.user);
-        user.products.push(newProduct._id);
-        user.save();
         return res.status(201).json({message:'Product saved'});
     }catch(error){
         console.log(error);
@@ -60,14 +67,27 @@ controller.updateProductById=async(req,res)=>{
 
 controller.deleteProductById=async(req,res)=>{
      try{
+        const match=await deleteProductToUser(req.user,req.params.id);
+        if(match===false) return res.status(404).json({message:'Not Found'});
         const product=await Product.findOneAndDelete({_id:req.params.id,seller:req.user});
         if(!product)return res.status(404).json({message:"Product not found"});
         unlinkSync(product.image);
-        return res.json({message:'product deleted'});
+        return res.json({message:'Product Deleted'});
      }catch(error){
          console.log(error);
         return res.status(404).json({message:"Product not found"});
      }
-}
+};
+
+const deleteProductToUser= async (id,product) => {
+    const user=await User.findById(id);
+    if(!user) return false;
+    await user.products.forEach((item,index,object)=>{
+        if(item._id == product)object.splice(index,1);
+    });
+    await user.save();
+    await Comment.deleteMany({postId:product});
+    return true;
+};
 
 module.exports=controller;

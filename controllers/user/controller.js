@@ -5,15 +5,15 @@ const controller={};
 controller.signin=async(req,res)=>{
     const user=await User.findOne({email:req.body.email});
     if(!user)return res.status(404).json({message: 'User not found'});
-    const validatePassword=user.validatePassword(req.body.password);
+    const validatePassword=await user.validatePassword(req.body.password);
     if(!validatePassword)return res.status(401).json({auth: false, token: null});
     const token=jwt.sign(
-        {id:user._id, email:user.email, password: user.password},
+        {id:user._id, email:user.email},
         process.env.SECRET_KEY,
         {
             expiresIn:60*60*24
         });
-    return res.json({token,user});
+    return res.json({token,user:{email:user.email,userName:user.userName}});
 }
 
 controller.signup=async(req,res)=>{
@@ -52,6 +52,12 @@ controller.update=async(req,res)=>{
     }
 };  
 
-
+controller.addProduct= async (id,product) => {
+    const user=await User.findById(id);
+    if(!user) return false;
+    await user.products.push(product);
+    await user.save();
+    return true;
+};
 
 module.exports=controller;

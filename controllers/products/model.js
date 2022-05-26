@@ -22,7 +22,13 @@ const productModel=new Schema({
     url_image:{
         type: String,
         required:true
-    }
+    },
+    comments:[
+        {
+            type: Schema.ObjectId,
+            ref: 'Comment'
+        }
+    ]
 });
 
 
