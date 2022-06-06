@@ -6,7 +6,6 @@ let uri='';
 if(NODE_ENV === 'production')uri=DB_URI_CONNECTION;
 else uri=DB_URI_DEVELOPMENT;
 
-
 const options={
     useNewUrlParser: true,
     useUnifiedTopology: true,

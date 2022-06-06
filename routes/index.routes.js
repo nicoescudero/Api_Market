@@ -4,6 +4,8 @@ const token=require('../utils/verifyToken');
 routes.use('/user',require('../controllers/user/routes'));
 routes.use('/products',token,require('../controllers/products/routes'));
 routes.use('/comments',token,require('../controllers/comments/routes'));
-routes.get('/authenticated',token);
+routes.get('/authenticated',token,(req,res)=>{
+    return res.status(200);
+});
 
 module.exports = routes;
