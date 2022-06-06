@@ -1,8 +1,15 @@
 const Product=require('./model');
 const User=require('../user/model');
+const ctrlUser=require('../user/controller');
 const Comment=require('../comments/model');
+const {v4 : uuid}=require('uuid');
+const sharp=require('sharp');
 const {unlinkSync}=require('fs');
 const controller={};
+
+const helperImage=(filePath,filename,size=300)=>{
+    return sharp((filePath).resize(size).toFile());
+};
 
 controller.getProducts=async(req,res)=>{
     const products=await Product.find({seller: req.user});
@@ -28,6 +35,9 @@ controller.getProductById=async(req,res)=>{
 controller.createProduct=async(req,res)=>{
     try{
         let image=req.file;
+        //let filename=`${uuid()}.png`;
+        //let url_optimize_image=`./public/optimize/${filename}`;
+        //helperImage(image.path,filename,300);
         const newProduct= new Product({
             seller:req.user,
             name:req.body.name,
@@ -58,6 +68,8 @@ controller.updateProductById=async(req,res)=>{
             url_image:image.filename
         });
         if(!product)return res.status(404).json({message:'Product not found'});
+        console.log(product);
+        await unlinkSync(product.image);
         return res.json(product);
     }catch(error) {
         console.log(error);
@@ -71,7 +83,7 @@ controller.deleteProductById=async(req,res)=>{
         if(match===false) return res.status(404).json({message:'Not Found'});
         const product=await Product.findOneAndDelete({_id:req.params.id,seller:req.user});
         if(!product)return res.status(404).json({message:"Product not found"});
-        unlinkSync(product.image);
+        await unlinkSync(product.image);
         return res.json({message:'Product Deleted'});
      }catch(error){
          console.log(error);
