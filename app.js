@@ -8,7 +8,7 @@ require('./settings/mongoose');
 //settings
 app.set('port',process.env.PORT || 3000);
 //middlewares
-app.use(cors({origin:['http://localhost:4000']}))
+app.use(cors({origin:['https://nicoescudero.github.io/React-Market-App']}))
 app.use(express.static(path.join(__dirname,'public')));
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
