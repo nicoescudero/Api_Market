@@ -8,4 +8,6 @@ routes.get('/authenticated',token,(req,res)=>{
     return res.status(200);
 });
 
+routes.get('/',(req,res)=>{return res.json({message:'Api Market Light'})});
+
 module.exports = routes;
